@@ -1,0 +1,27 @@
+// Existing code extracts properties like:
+const gchar *id_fs_usage = g_udev_device_get_property (object->device->udev_device, "ID_FS_USAGE");
+const gchar *id_fs_type = g_udev_device_get_property (object->device->udev_device, "ID_FS_TYPE");
+// ... other properties ...
+
+// Add this block for UDF fallback
+const gchar *id_cdrom = g_udev_device_get_property (object->device->udev_device, "ID_CDROM");
+gchar *usage = g_strdup (id_fs_usage ? id_fs_usage : "");
+gchar *type = g_strdup (id_fs_type ? id_fs_type : "");
+if (g_strcmp0 (id_cdrom, "1") == 0 && (type[0] == '\0' || g_strcmp0 (usage, "filesystem") != 0)) {
+    g_free (usage);
+    usage = g_strdup ("filesystem");
+    g_free (type);
+    type = g_strdup ("udf");
+}
+
+// Then, in the existing g_object_set, use 'usage' and 'type' instead of direct properties:
+g_object_set (block,
+              // ... other properties ...
+              "id-usage", usage,
+              "id-type", type,
+              // ... rest of properties ...
+              NULL);
+
+// Clean up
+g_free (usage);
+g_free (type);
