@@ -20,6 +20,7 @@
 =====================================================================
 =====================================================================
 
+
 What is Kickstart?
 
   Kickstart.nvim is *not* a distribution.
@@ -87,11 +88,15 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
+vim.opt.encoding = "utf-8"
+vim.opt.fileencoding = "utf-8"
+vim.opt.termbidi = true
+
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -683,8 +688,8 @@ require("lazy").setup({
 			local servers = {
 				-- clangd = {},
 				-- gopls = {},
-				-- pyright = {},
-				-- rust_analyzer = {},
+				pyright = {},
+				rust_analyzer = {},
 				-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 				--
 				-- Some languages (like typescript) have entire language plugins that can be useful:
@@ -845,7 +850,7 @@ require("lazy").setup({
 				-- <c-k>: Toggle signature help
 				--
 				-- See :h blink-cmp-config-keymap for defining your own keymap
-				preset = "default",
+				preset = "super-tab",
 
 				-- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
 				--    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1068,6 +1073,16 @@ vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
+
+-- normal mode rebind
+vim.keymap.set("i", "<A-i>", "<Esc>")
+
+-- keybinds for viewing errors
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show line diagnostics [E]rror" })
+-- Go to the next diagnostic
+vim.keymap.set("n", "<leader>dn", vim.diagnostic.goto_next, { desc = "Go to [N]ext diagnostic" })
+-- Go to the previous diagnostic
+vim.keymap.set("n", "<leader>dp", vim.diagnostic.goto_prev, { desc = "Go to [P]revious diagnostic" })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
